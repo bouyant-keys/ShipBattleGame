@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -8,72 +5,62 @@ public class Projectile : MonoBehaviour
     public Rigidbody _rB;
     public SphereCollider _collider;
     public Pool _pool;
-    public AudioManager _audioManager;
     public AudioSource _audioSource;
-    public GameObject[] _trails = new GameObject[2]; //0 is normal speed trail, 1 is fast trail
-    public ParticleSystem _bulletPop; //0 is smoke pop
-    public MeshRenderer _bulletVis;
-    public float _startTime;
     public int _maxBounces = 2;
+
+    [SerializeField] MeshRenderer _bulletVis;
+    [SerializeField] ParticleSystem _bulletPop;
+    [SerializeField] GameObject _bulletTrail;
+    [SerializeField] GameObject _fastBulletTrail;
 
     Vector3 _direction;
     Vector3 _lastVelocity;
     Vector3 _collisionPos;
     [SerializeField] int _bounceCount = 0;
+    float _startTime;
     float _currentSpeed;
-
-    private void Awake()
-    {
-        _audioManager = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
-    }
 
     public void Launch(float speedMultiplier, Vector3 dir)
     {
+        _bounceCount = 0;
+
         _startTime = Time.time;
         _bulletVis.enabled = true;
         _collider.enabled = true;
 
-        _rB.velocity = (dir * speedMultiplier * 10f);
+        _rB.velocity = dir * speedMultiplier * 10f;
         _bulletVis.transform.forward = dir;
 
         if (speedMultiplier >= 1.5f) //Make it so the fast bullet sounds work
         {
-            _audioManager.Play(_audioManager._fastBulletFire);
+            AudioManager.instance.Play(AudioManager.instance._fastBulletFire);
             _audioSource.Play();
-            _trails[1].SetActive(true);
+            _bulletTrail.SetActive(false);
+            _fastBulletTrail.SetActive(true);
         }
         else
         {
-            _audioManager.Play(_audioManager._tankFire);
-            _trails[0].SetActive(true);
+            AudioManager.instance.Play(AudioManager.instance._tankFire);
+            _bulletTrail.SetActive(true);
+            _fastBulletTrail.SetActive(false);
         }
     }
 
     private void LateUpdate()
     {
-        if (!GameManager._inputEnabled)
+        if (!GameManager._globalInputEnabled)
         {
             _rB.velocity = Vector3.zero;
         }
         _lastVelocity = _rB.velocity;
     }
 
-    /**
-     * 
-     *  TODO: Projectiles keep colliding where bulletpops occur, maybe colliding with 
-     * 
-     * */
-
-
     private void OnCollisionEnter(Collision collision)
     {
-        _currentSpeed = _lastVelocity.magnitude;
-        _collisionPos = collision.GetContact(0).point;
-
+        //print($"obj: {collision.gameObject}, bounces: {_bounceCount}");
         switch (collision.gameObject.tag)
         {
             case "Projectile":
-                print("Projectile Collision");
                 float collisionLife = collision.gameObject.GetComponent<Projectile>()._startTime;
                 if (_startTime < collisionLife)
                 {
@@ -88,45 +75,53 @@ public class Projectile : MonoBehaviour
             case "Enemy":
                 ReturnToPool();
                 break;
+            default:
+                CheckBounce(collision);
+                break;
         }
 
-        if (_bounceCount < _maxBounces) //Bounce off wall
-        {
-            _audioManager.Play(_audioManager._bulletBounce);
+    }
 
-            _direction = Vector3.Reflect(_lastVelocity.normalized, collision.GetContact(0).normal);
-            _rB.velocity = _direction * Mathf.Max(_currentSpeed, 0);
-            _bulletVis.transform.forward = _direction;
-
-            _bounceCount++;
-        }
-        else //Bullet pops with effect and returns to pool
+    void CheckBounce(Collision collision)
+    {
+        if (_bounceCount >= _maxBounces)
         {
             BulletPop();
+            return;
         }
+        _currentSpeed = _lastVelocity.magnitude;
+        _collisionPos = collision.GetContact(0).point;
+
+        AudioManager.instance.Play(AudioManager.instance._bulletBounce);
+
+        _direction = Vector3.Reflect(_lastVelocity.normalized, collision.GetContact(0).normal);
+        _rB.velocity = _direction * _currentSpeed; //Mathf.Max(_currentSpeed, 0);
+        _bulletVis.transform.forward = _direction;
+
+        _bounceCount++;
     }
+
 
     private void BulletPop()
     {
         ResetBullet();
         
-        _audioManager.Play(_audioManager._bulletPop);
+        //print(_rB.velocity);
+
+        AudioManager.instance.Play(AudioManager.instance._bulletPop);
         _bulletPop.Play();
 
-        Invoke("ReturnToPool", _bulletPop.main.duration);
+        Invoke("ReturnObjToPool", _bulletPop.main.duration);
     }
 
     private void ResetBullet()
     {
-        _trails[0].SetActive(false);
-        _trails[1].SetActive(false);
+        _bulletTrail.SetActive(false);
+        _fastBulletTrail.SetActive(false);
         _bulletVis.enabled = false;
 
-        _bounceCount = 0;
         _rB.velocity = Vector3.zero;
-        _rB.rotation = Quaternion.identity;
         _collider.enabled = false;
-        transform.position = _collisionPos;
 
         _audioSource.Stop();
         _audioSource.time = 0;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WalkPoint : MonoBehaviour
 {
-    public EnemyNavMesh _enemyTank;
+    public MobileEnemyNavigation _enemyTank;
 
     private void Update()
     {

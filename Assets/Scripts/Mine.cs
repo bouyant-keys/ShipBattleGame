@@ -38,7 +38,7 @@ public class Mine : MonoBehaviour
             switch (hitCollider.tag)
             {
                 case "Enemy":
-                    hitCollider.GetComponent<EnemyController>().EnemyHit();
+                    hitCollider.GetComponent<MobileEnemyBrain>().EnemyHit();
                     break;
                 case "Player":
                     hitCollider.GetComponent<PlayerController>().PlayerHit();

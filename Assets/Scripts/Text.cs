@@ -19,9 +19,9 @@ public class Text : MonoBehaviour
     public string _prefixes = ""; //Any words or symbols that go before the variable (e.g. the "Mission : " part) 
 
     // Start is called before the first frame update
-    void Start()
+
+    private void Awake() 
     {
-        _gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         _text = this.GetComponent<TMP_Text>();
     }
 
@@ -36,7 +36,7 @@ public class Text : MonoBehaviour
                 _text.text = $"{_prefixes}{SceneLoader._currentLevel}";
                 break;
             case TextInfo.EnemyTanks:
-                _text.text = $"{_prefixes}{_gameManager._enemies.Count}";
+                _text.text = $"{_prefixes}{GameManager._enemyTotal}";
                 break;
             case TextInfo.TotalTanks:
                 _text.text = $"{_prefixes}{GameManager._totalTanksDestroyed}";

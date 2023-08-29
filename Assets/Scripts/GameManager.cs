@@ -2,46 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IDataPersistence
 {
-    public List<GameObject> _enemies; //DO NOT add any tanks into this list through the inspector!
-    GameObject _player;
+    List<GameObject> _enemies = new List<GameObject>();
     SceneLoader _sceneLoader;
     UIManager _uiManager;
     MusicManager _musicManager;
     FadeScreen _fadeScreen;
+    DataPersistenceManager _dataManager;
 
-    public static bool _inputEnabled = false;
+    public static int _enemyTotal;
+    public static bool _globalInputEnabled = false;
     public static int _lives = 5;
     public static int _totalTanksDestroyed;
     bool _playerDestroyed = false; //If the player is destroyed do not check for remaining enemies
     bool _tanksDestroyed = false; //If the tanks are destroyed do not check for player destroyed
 
-    void Awake()
-    {
-        GameObject[] objs = GameObject.FindGameObjectsWithTag("GameManager");
-        if (objs.Length > 1) Destroy(this.gameObject);
-
-        DontDestroyOnLoad(this.gameObject);
-    }
-
-    public void LevelStart()
+    void Awake() //Just found out that its safe to initialize variables like this in awake, fucking hell
     {
         _sceneLoader = GameObject.FindGameObjectWithTag("SceneManager").GetComponent<SceneLoader>();
         _uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
         _musicManager = GameObject.FindGameObjectWithTag("MusicManager").GetComponent<MusicManager>();
         _fadeScreen = GameObject.FindGameObjectWithTag("FadeScreen").GetComponent<FadeScreen>();
-        _player = GameObject.FindGameObjectWithTag("Player");
+        _dataManager = GameObject.FindGameObjectWithTag("DataManager").GetComponent<DataPersistenceManager>();
+    }
 
-        _playerDestroyed = false;
-        _tanksDestroyed = false;
+    private void Start() 
+    {
+        _dataManager.LoadGame();
 
-        _enemies.Clear();
         foreach (var enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
             _enemies.Add(enemy);
         }
-        
+        _enemyTotal = _enemies.Count;
+
+        _uiManager.UpdateUI();
         _fadeScreen.FadeIn();
         StartCoroutine(LevelIntro());
     }
@@ -49,25 +45,25 @@ public class GameManager : MonoBehaviour
     private IEnumerator LevelIntro()
     {
         _musicManager.StartLevelMusic(0);
-        _uiManager.SetActiveMenu("IntroMenu");
+        _uiManager.SetActiveMenu(Menu.MenuType.Intro);
         yield return new WaitForSeconds(_musicManager._levelMusic[0].length);
 
         _musicManager.StartLevelMusic(1);
-        _uiManager.SetActiveMenu("DefaultMenu");
+        _uiManager.SetActiveMenu(Menu.MenuType.Default);
         yield return new WaitForSeconds(_musicManager._levelMusic[1].length);
 
-        _inputEnabled = true;
+        _globalInputEnabled = true;
         _musicManager.StartMusic(HighestLevel(), _enemies.Count);
     }
 
     private IEnumerator LevelOutro(bool win)
     {
-        _inputEnabled = false;
+        _globalInputEnabled = false;
 
         if (win)
         {
             _musicManager.EndLevelMusic(true);
-            _uiManager.SetActiveMenu("ClearedMenu");
+            _uiManager.SetActiveMenu(Menu.MenuType.Cleared);
 
             yield return new WaitForSeconds(_musicManager._levelMusic[2].length);
             _fadeScreen.FadeOut();
@@ -95,7 +91,7 @@ public class GameManager : MonoBehaviour
         int tempNum = 0;
         for (int i = 0; i < _enemies.Count; i++)
         {
-            int level = _enemies[i].GetComponent<EnemyController>()._tank._level;
+            int level = _enemies[i].GetComponent<IEnemyTank>().GetTankLevel();
             if (level > tempNum)
             {
                 tempNum = level;
@@ -135,5 +131,23 @@ public class GameManager : MonoBehaviour
         _lives--;
         _playerDestroyed = true;
         StartCoroutine(LevelOutro(false));
+    }
+
+    public void SaveData(GameData data)
+    {
+        data.shipsDestroyedEver += _totalTanksDestroyed;
+        //data.completedGame
+
+        data.shipsDestroyedRound = _totalTanksDestroyed;
+        data.livesRemaining = _lives;
+    }
+
+    public void LoadData(GameData data)
+    {
+        //data.shipsDestroyedEver
+        //data.completedGame
+
+        _totalTanksDestroyed = data.shipsDestroyedRound;
+        _lives = data.livesRemaining;
     }
 }

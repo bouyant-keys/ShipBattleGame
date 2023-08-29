@@ -14,8 +14,18 @@ public class AudioManager : MonoBehaviour
 
     AudioSource _audioSource;
 
-    private void Awake()
+    //Singleton pattern
+    public static AudioManager instance;
+    private void Awake() 
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
         _audioSource = this.GetComponent<AudioSource>();
     }
 

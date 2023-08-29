@@ -1,78 +1,66 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public TankTypes _tank;
-    public Transform _cannon;
-    public Transform _projectileSpawn;
-    public Transform _mineSpawn;
-    public Rigidbody _rigidBody;
-    public BoxCollider _collider;
-    public MeshRenderer _baseVis;
-    public MeshRenderer _cannonVis;
-    public ParticleSystem _tankExplosion;
+    [SerializeField] TankTypes _tank;
+    [SerializeField] GameObject _crown;
+    [SerializeField] Transform _cannon;
+    [SerializeField] Transform _projectileSpawn;
+    [SerializeField] Transform _mineSpawn;
+    [SerializeField] Rigidbody _rigidBody;
+    [SerializeField] BoxCollider _collider;
+    [SerializeField] MeshRenderer _baseVis;
+    [SerializeField] MeshRenderer _cannonVis;
+    [SerializeField] ParticleSystem _tankExplosion;
     GameManager _gameManager;
     UIManager _uiManager;
     PlayerPool _playerPool;
     AudioManager _audioManager;
-    Transform _cameraTrans;
 
     public bool tankControls = false;
     public float _rotationSensitivity = 8f;
-    bool _gameHasStarted = false;
     float _playerSpeed;
     float _horizontalForce;
     float _verticalForce;
-    float _cameraZDist;
     bool _localInputEnabled = true;
 
     Quaternion _rotationToTarget;
     Transform _mouseWorldPos;
     Vector3 _directionToTarget;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake() 
     {
         _gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         _uiManager = GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIManager>();
         _playerPool = GameObject.FindGameObjectWithTag("PlayerPool").GetComponent<PlayerPool>();
-        _mouseWorldPos = GameObject.FindGameObjectWithTag("MouseWorldPos").GetComponent<Transform>();
         _audioManager = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
-        _cameraTrans = GameObject.FindGameObjectWithTag("MainCamera").transform;
+        _mouseWorldPos = GameObject.FindGameObjectWithTag("MouseWorldPos").transform;
+
+        //TODO: Enable/disable Crown based on save file
+        if (_crown.activeSelf) _crown.SetActive(false);
 
         _playerSpeed = _tank._tankSpeed * 5f;
     }
     
     void FixedUpdate()
     {
-        if (GameManager._inputEnabled && _localInputEnabled)
-        {
-            if (tankControls) TankMovement();
-            else CameraMovement();
+        if (!GameManager._globalInputEnabled || !_localInputEnabled) return;
 
-            //Cannon face Mouse/Target
-            _directionToTarget = new Vector3(_mouseWorldPos.position.x - transform.position.x, 0f, _mouseWorldPos.position.z - transform.position.z);
-            _rotationToTarget = Quaternion.LookRotation(_directionToTarget);
+        if (tankControls) TankMovement();
+        else CameraMovement();
+
+        //Cannon face Mouse/Target
+        _directionToTarget = new Vector3(_mouseWorldPos.position.x - transform.position.x, 0f, _mouseWorldPos.position.z - transform.position.z);
+        _rotationToTarget = Quaternion.LookRotation(_directionToTarget);
             
-            _cannon.rotation = _rotationToTarget;
-        }
+        _cannon.rotation = _rotationToTarget;
     }
 
     void Update()
     {
-        if (GameManager._inputEnabled && _localInputEnabled)
-        {
-            HandleInputs();
-        }
-
-        if (!_gameHasStarted)
-        {
-            _gameManager.LevelStart();
-            _gameHasStarted = true;
-        }
+        if (!GameManager._globalInputEnabled || !_localInputEnabled) return;
+        
+        HandleInputs();
     }
 
     private void TankMovement()
@@ -122,7 +110,7 @@ public class PlayerController : MonoBehaviour
         //Other inputs
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            _uiManager.SetActiveMenu("Pause Menu");
+            _uiManager.Pause();
         }
     }
 
