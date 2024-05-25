@@ -4,19 +4,25 @@ using UnityEngine;
 
 public class MainMenuManager : MonoBehaviour
 {
-    List<GameObject> _menuList = new List<GameObject>();
+    [SerializeField] FadeScreen _fadeScreen;
+    [SerializeField] SceneLoader _sceneLoader;
+    public List<GameObject> _menuList;
+    public GameObject _activeMenu;
+
+    int _levelToLoad;
 
     // Start is called before the first frame update
     void Start()
     {
-        foreach (var menu in GameObject.FindGameObjectsWithTag("Menu"))
+        foreach (var menu in _menuList)
         {
-            _menuList.Add(menu);
             if (menu.name != "MainMenu")
             {
                 menu.SetActive(false);
             }
         }
+
+        _fadeScreen.FadeIn();
     }
 
     public void SetActiveMenu(string menuName)
@@ -29,6 +35,7 @@ public class MainMenuManager : MonoBehaviour
             if (menu.name == menuName)
             {
                 menu.SetActive(true);
+                _activeMenu = menu;
                 break;
             }
             menu.SetActive(false);
@@ -51,5 +58,18 @@ public class MainMenuManager : MonoBehaviour
             return _menuList[index];
         }
         return null;
+    }
+
+    public void LoadLevel(int buildIndex)
+    {
+        _levelToLoad = buildIndex;
+        _fadeScreen.FadeOut();
+        StartCoroutine(WaitToLoad());
+    }
+
+    IEnumerator WaitToLoad()
+    {
+        yield return new WaitForSeconds(1.5f);
+        _sceneLoader.LoadSceneFromMenu(_levelToLoad);
     }
 }

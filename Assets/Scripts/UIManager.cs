@@ -3,10 +3,19 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    MusicManager _musicManager;
+    AudioManager _audioManager;
+
     [SerializeField] List<Menu> _menuList;
     [SerializeField] List<Text> _textList;
 
     Menu _activeMenu;
+
+    private void Awake() 
+    {
+        _musicManager = GameObject.FindGameObjectWithTag("MusicManager").GetComponent<MusicManager>();
+        _audioManager = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
+    }
 
     public void UpdateUI()
     {
@@ -102,5 +111,21 @@ public class UIManager : MonoBehaviour
             Time.timeScale = 1;
             GameManager._globalInputEnabled = true;
         }
+    }
+
+    //Pause menu functions:
+    public void QuitToMenu()
+    {
+        GameObject.FindGameObjectWithTag("SceneManager").GetComponent<SceneLoader>().LoadStartScene();
+    }
+
+    public void ChangeMusicVolume(float value)
+    {
+        _musicManager._audioSource.volume = value;
+    }
+
+    public void ChangeSFXVolume(float value)
+    {
+        _audioManager._audioSource.volume = value;
     }
 }

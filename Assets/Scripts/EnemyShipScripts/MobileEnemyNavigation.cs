@@ -1,12 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class MobileEnemyNavigation : MonoBehaviour
 {
-    TankTypes _tankType;
+    ShipTypes _tankType;
     MobileEnemyCannon _enemyCannon;
     NavMeshAgent _agent;
     Vector3 _playerPosition;
@@ -20,7 +17,7 @@ public class MobileEnemyNavigation : MonoBehaviour
     bool _retreatPointSet = false;
     bool _alreadyAttacked;
 
-    public void SetUp(TankTypes tank)
+    public void SetUp(ShipTypes tank)
     {
         _tankType = tank;
         _agent = GetComponent<NavMeshAgent>();
@@ -40,12 +37,6 @@ public class MobileEnemyNavigation : MonoBehaviour
         _retreatPointSet = false;
 
         return _agent.isStopped;
-    }
-
-    public void Idle()
-    {
-        //look with cannon back and forth, maybe around where the player was last seen?
-        //looking around could be an animation?
     }
 
     public void Patrol()

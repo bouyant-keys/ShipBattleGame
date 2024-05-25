@@ -1,31 +1,28 @@
 Bugs in no particular order
-- Bullets will sometimes not riccochet when they should
 - Bullets will collide with destroyed tanks
-- Bullet pop particle will move instead of staying still
-- Mines placed by enemies will default to the same position except when about to explode
-    - Probably mesh is just offset?
-- Mines do not flash before exploding
-- GameManager upon reloading or starting a new level will not progress into the intro sequence
-    - Previous solution was moving the starting function from the playercontroller into GameManager
-    But that doesn't seem to work for any other scenes except the one you press play in.
+- Destroyed tanks will still fire between exploding and being set inactive
+
 
 General Things:
-- Add a tutorial screen! Or integrate it into the first couple levels!
-    - Add ui info for bullets and mines, how many there are - are in use- and when you've run out
-- Replace all stationary tanks with the new StationaryEnemyTank prefab
-- Update all Scene models (e.g. Water, Crates, bouys, etc.)
-- On maximized, the top of text have some kind of text fragment?
-- Generally improve the look of particle effects, as they don't match the game style
-- Make it so crates (breakable blocks) aren't scaled in any scenes
-- shadows for the ships aren't completely solid
+- Add indicator to show which tank is player on start
+- Dotted line between crosshair and ship cannon
+
+
+Things Missing:
+- New level start music
+- Sound effect for breaking crates
+- Sound effect for ships moving
+- Ambient sea sounds
 
 
 *** Possible Additions:
-- Fisheye lens effect on camera, to make ships look like toys
-- More levels? up to lvl 15 instead of 10?
 - Final Boss level
     - Stronger tank that takes multiple hits, is bigger, has the crown
     - Upon defeat a star could be added to the main menu, along with your ship now having the crown in game!
-- Intro menu could have a slider showing how far to the end you've gotten
 - Little white flags bouys to show where enemies were defeated
 - destroyed enemies could bounce out of the playable area?
+
+Possible Name:
+- Sea Battle (starting point)
+- Coastal Clash, Coastal Chaos (needs work)
+- Toy, ship, battle, nautical

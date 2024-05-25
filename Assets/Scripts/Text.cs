@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 public class Text : MonoBehaviour
 {
-    GameManager _gameManager;
     TMP_Text _text;
 
     public enum TextInfo
@@ -16,24 +13,24 @@ public class Text : MonoBehaviour
         TotalTanks
     }
     public TextInfo _textType = TextInfo.Lives;
-    public string _prefixes = ""; //Any words or symbols that go before the variable (e.g. the "Mission : " part) 
-
-    // Start is called before the first frame update
+    [SerializeField] string _prefixes; //Any words or symbols that go before the variable (e.g. the "Mission : " part) 
 
     private void Awake() 
     {
-        _text = this.GetComponent<TMP_Text>();
+        _text = GetComponent<TMP_Text>();
     }
 
     public void UpdateText()
     {
+        if (string.IsNullOrEmpty(_prefixes)) _prefixes = "";
+
         switch (_textType)
         {
             case TextInfo.Lives:
                 _text.text = $"{_prefixes}{GameManager._lives}";
                 break;
             case TextInfo.Mission:
-                _text.text = $"{_prefixes}{SceneLoader._currentLevel}";
+                _text.text = $"{_prefixes}{SceneLoader._currentLevelIndex}";
                 break;
             case TextInfo.EnemyTanks:
                 _text.text = $"{_prefixes}{GameManager._enemyTotal}";

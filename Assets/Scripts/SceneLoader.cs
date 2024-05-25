@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour {
 
-    public static int _currentLevel => SceneManager.GetActiveScene().buildIndex;
+    public static int _currentLevelIndex => SceneManager.GetActiveScene().buildIndex;
 
     public void LoadStartScene()
     {
@@ -17,23 +15,23 @@ public class SceneLoader : MonoBehaviour {
         SceneManager.LoadScene(name);
     }
 
+    public void LoadSceneFromMenu(int index)
+    {
+        SceneManager.LoadScene(_currentLevelIndex + index);
+    }
+
     public void LoadNextLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(_currentLevelIndex + 1);
     }
 
     public void ReloadScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(_currentLevelIndex);
     }
 
     public void QuitGame()
     {
         Application.Quit();
-    }
-    
-    public int GetCurrentLevelIndex()
-    {
-        return SceneManager.GetActiveScene().buildIndex;
     }
 }

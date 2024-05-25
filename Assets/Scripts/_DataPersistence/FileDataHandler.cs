@@ -37,7 +37,7 @@ public class FileDataHandler //: MonoBehaviour
                     writer.Write(dataToStore);
                 }
             }
-            Debug.Log("Game Saved.");
+            Debug.Log($"Game Saved to: {dataDirPath}");
         }
         catch (Exception e) 
         {
@@ -66,6 +66,7 @@ public class FileDataHandler //: MonoBehaviour
 
                 // deserialize the data from Json back into the C# object
                 loadedData = JsonUtility.FromJson<GameData>(dataToLoad);
+                Debug.Log($"Game Loaded from: {dataDirPath}");
             }
             catch (Exception e) 
             {

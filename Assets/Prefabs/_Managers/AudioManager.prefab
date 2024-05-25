@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8491444972272146655}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8491444972272146652
 MonoBehaviour:
@@ -50,7 +51,10 @@ MonoBehaviour:
   _tankFire: {fileID: 8300000, guid: dde183eca22c60f488a65d053267c50f, type: 3}
   _misfire: {fileID: 8300000, guid: f79afa371165e2b49b941ee2721fdfe4, type: 3}
   _fastBulletFire: {fileID: 8300000, guid: 0eb369e72e8199543a4eede73f3bf84d, type: 3}
-  _mineBeep: {fileID: 8300000, guid: e54428a4f2902794cbed1b137f3a75ae, type: 3}
+  _mineBeep: {fileID: 8300000, guid: 682ef3afc495ffd41bcb37831a8e1b84, type: 3}
+  _mineLay: {fileID: 8300000, guid: 075346a19239f544abc69e009ac96ee8, type: 3}
+  _boxBreak: {fileID: 8300000, guid: ed716e097c9c3a74987a7669d33ae609, type: 3}
+  _audioSource: {fileID: 7381379277177282553}
 --- !u!82 &7381379277177282553
 AudioSource:
   m_ObjectHideFlags: 0

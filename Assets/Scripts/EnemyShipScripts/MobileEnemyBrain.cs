@@ -1,17 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MobileEnemyBrain : MonoBehaviour, IEnemyTank
 {
     public LayerMask _playerLayer, _obstacleLayer;
-    public int _tankLevel => _tank._level; //Used by gamemanager to determine highest lvl tank on screen
+    public int _shipLevel => _ship._level; //Used by gamemanager to determine highest lvl tank on screen
 
-    [SerializeField] TankTypes _tank; //Provides all baseline info for specific tank movement, attack patterns, etc.
+    [SerializeField] ShipTypes _ship; //Provides all baseline info for specific tank movement, attack patterns, etc.
     [SerializeField] MeshRenderer _baseVis; //Used to change material color based on tank
     [SerializeField] MeshRenderer _cannonVis; //Used to change material color based on tank
-    [SerializeField] ParticleSystem _tankExplosion;
+    [SerializeField] ParticleSystem _explosion;
+    [SerializeField] ParticleSystem _ripples;
     GameManager _gameManager;
     Transform _playerPos;
     MobileEnemyNavigation _navMesh;
@@ -37,10 +35,10 @@ public class MobileEnemyBrain : MonoBehaviour, IEnemyTank
         _playerPos = GameObject.FindGameObjectWithTag("Player").transform;
         _gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
-        _navMesh.SetUp(_tank);
+        _navMesh.SetUp(_ship);
         
-        _baseVis.materials[1].color = _tank._tankColor;
-        _cannonVis.materials[1].color = _tank._tankColor;
+        _baseVis.materials[1].color = _ship._tankColor;
+        _cannonVis.materials[1].color = _ship._tankColor;
     }
 
     // Update is called once per frame
@@ -51,7 +49,11 @@ public class MobileEnemyBrain : MonoBehaviour, IEnemyTank
         else if (!_localInputEnabled)
         {
             //Stops moving tanks from moving
-            if (!_agentStopped) _agentStopped = _navMesh.StopResetAgent();
+            if (!_agentStopped)
+            {
+                _agentStopped = _navMesh.StopResetAgent();
+                return;
+            } 
             else return;
         }
 
@@ -77,11 +79,11 @@ public class MobileEnemyBrain : MonoBehaviour, IEnemyTank
     //Determines which state the tank should be in, based on if the player is nearby and within sight
     private void CheckRadar()
     {
-        if (_tank._canMove)
+        if (_ship._canMove)
         {
-            _playerInSightRange = Physics.CheckSphere(transform.position, _tank._sightRange, _playerLayer);
+            _playerInSightRange = Physics.CheckSphere(transform.position, _ship._sightRange, _playerLayer);
         }
-        _playerInAttackRange = Physics.CheckSphere(transform.position, _tank._attackRange, _playerLayer);
+        _playerInAttackRange = Physics.CheckSphere(transform.position, _ship._attackRange, _playerLayer);
         
         if (_playerInAttackRange || _playerInSightRange)
         {
@@ -98,7 +100,7 @@ public class MobileEnemyBrain : MonoBehaviour, IEnemyTank
         Vector3 rayDir = _playerPos.position - transform.position;
         bool isSightObstructed = Physics.Raycast(transform.position, rayDir, rayDir.magnitude, _obstacleLayer);
         
-        if (isSightObstructed || !_tank._canFire)
+        if (isSightObstructed || !_ship._canFire)
         {
             _currentState = State.Patroling;
         }
@@ -108,7 +110,7 @@ public class MobileEnemyBrain : MonoBehaviour, IEnemyTank
 
             if (_playerInAttackRange)
             {
-                if (!_tank._isOffensive) _currentState = State.Escaping; 
+                if (!_ship._isOffensive) _currentState = State.Escaping; 
                 else _currentState = State.Attacking;
             }
             else if (_playerInSightRange && _currentState != State.Escaping) _currentState = State.Chasing;
@@ -123,15 +125,17 @@ public class MobileEnemyBrain : MonoBehaviour, IEnemyTank
         _baseVis.enabled = false;
         _cannonVis.enabled = false;
 
-        _tankExplosion.Play(); //Plays explosion effect
+        _ripples.Stop();
+        _explosion.Play(); //Plays explosion effect
         AudioManager.instance.Play(AudioManager.instance._tankExplosion);
-        Invoke("Die", _tankExplosion.main.duration);
+
+        Invoke("Die", _explosion.main.duration);
     }
 
     private void Die()
     {
         gameObject.SetActive(false);
-        _gameManager.CheckRemainingEnemies();
+        _gameManager.EnemyDestroyed();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -146,17 +150,17 @@ public class MobileEnemyBrain : MonoBehaviour, IEnemyTank
     {
         //Attack Range
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _tank._attackRange);
-        if (_tank._canMove)
+        Gizmos.DrawWireSphere(transform.position, _ship._attackRange);
+        if (_ship._canMove)
         {
             //Sight Range
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, _tank._sightRange);
+            Gizmos.DrawWireSphere(transform.position, _ship._sightRange);
         }
     }
 
     public int GetTankLevel()
     {
-        return _tank._level;
+        return _ship._level;
     }
 }

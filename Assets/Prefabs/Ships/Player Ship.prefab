@@ -37,6 +37,7 @@ Transform:
   - {fileID: 3338554619057279952}
   - {fileID: 408719721999762487}
   - {fileID: 2299535322040539197}
+  - {fileID: 7122403651413180473}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &3338554618599555884
@@ -98,7 +99,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -195,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4f052876c387ea409188ad22378f11d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tank: {fileID: 11400000, guid: 01334c43f19fe8748af8e5b3db433d75, type: 2}
+  _ship: {fileID: 11400000, guid: 01334c43f19fe8748af8e5b3db433d75, type: 2}
   _crown: {fileID: 1074038998840532621}
   _cannon: {fileID: 3338554619057279952}
   _projectileSpawn: {fileID: 546333778805905731}
@@ -204,8 +205,8 @@ MonoBehaviour:
   _collider: {fileID: 3338554618599555884}
   _baseVis: {fileID: 819196623685253819}
   _cannonVis: {fileID: 1392547170730229466}
-  _tankExplosion: {fileID: 2785018101873606794}
-  tankControls: 0
+  _explosion: {fileID: 2785018101873606794}
+  _ripples: {fileID: 5561252325282004274}
   _rotationSensitivity: 3
 --- !u!1 &3338554619057279953
 GameObject:
@@ -534,6 +535,73 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 81215136c06e1e049a33b0848c0470b0, type: 3}
   m_PrefabInstance: {fileID: 2113954932892905942}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4043757409100276893
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3338554618599555873}
+    m_Modifications:
+    - target: {fileID: 2990891326152323884, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_Name
+      value: RippleFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.145
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+--- !u!198 &5561252325282004274 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8445311937397987759, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+  m_PrefabInstance: {fileID: 4043757409100276893}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7122403651413180473 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6541922192532907172, guid: a7d7bc24eebe07f49ba0cd5c283e92e6, type: 3}
+  m_PrefabInstance: {fileID: 4043757409100276893}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6361568390473883594
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -544,7 +612,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 521123140403612938, guid: 4127f0e5dcf1e6940944aab885c5cd70, type: 3}
       propertyPath: m_Name
-      value: TankExplosion
+      value: ExplosionFX
       objectReference: {fileID: 0}
     - target: {fileID: 5161480925682075639, guid: 4127f0e5dcf1e6940944aab885c5cd70, type: 3}
       propertyPath: m_RootOrder
@@ -590,10 +658,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8235278366279214091, guid: 4127f0e5dcf1e6940944aab885c5cd70, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

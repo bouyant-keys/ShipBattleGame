@@ -3,17 +3,16 @@ using UnityEngine;
 
 public class StationaryEnemyCannon : MonoBehaviour
 {
-    [SerializeField] Transform _turretPivot; //May be useless
     [SerializeField] Transform _projectileSpawn;
+    StationaryEnemyBrain _enemyBrain;
     public int _maxBulletsFired;
     public bool _idling = true;
     public bool _attacking = false;
 
-    public TankTypes _tank;
+    public ShipTypes _ship;
     EnemyPool _enemyPool;
     Transform _player;
-    //Quaternion _rotationToTarget;
-    //Vector3 _direction;
+
     bool _rotatingPositive = true;
     [SerializeField] float _lookRotateAngle = 65f;
     [SerializeField] float _rotationOffset = 0f;
@@ -29,13 +28,14 @@ public class StationaryEnemyCannon : MonoBehaviour
 
     private void Start()
     {
+        _enemyBrain = GetComponentInParent<StationaryEnemyBrain>();
         _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         _enemyPool = GameObject.FindGameObjectWithTag("EnemyPool").GetComponent<EnemyPool>();
     }
     
     private void Update()
     {
-        if (!GameManager._globalInputEnabled) return;
+        if (!GameManager._globalInputEnabled || !_enemyBrain._localInputEnabled) return;
 
         if (_idling) IdleLooking();
         else if (_attacking) 
@@ -68,7 +68,6 @@ public class StationaryEnemyCannon : MonoBehaviour
 
     IEnumerator PauseLook()
     {
-        //print("Waiting between turns");
         _idling = false;
         yield return new WaitForSeconds(_pauseTime);
         _rotatingPositive = !_rotatingPositive;
@@ -85,16 +84,15 @@ public class StationaryEnemyCannon : MonoBehaviour
 
     public void Fire()
     {
-        print("firing");
         //Fires in the transform.forward direction of the _projectileSpawn
         if (_bulletsFired < _maxBulletsFired && !_alreadyAttacked)
         {
             _alreadyAttacked = true;
             //Allows the tank to fire a spread of bullets before having a longer cooldown
-            if (_bulletsFired == _maxBulletsFired - 1) Invoke(nameof(ResetAttack), _tank._fireCooldown);
-            else Invoke(nameof(ResetAttack), _tank._fireDelay);
+            if (_bulletsFired == _maxBulletsFired - 1) Invoke(nameof(ResetAttack), _ship._fireCooldown);
+            else Invoke(nameof(ResetAttack), _ship._fireDelay);
 
-            _enemyPool.GetBulletFromPool(_projectileSpawn, _tank);
+            _enemyPool.GetBulletFromPool(_projectileSpawn, _ship);
             _bulletsFired++;
         }
     }

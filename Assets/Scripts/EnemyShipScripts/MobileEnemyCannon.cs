@@ -18,7 +18,7 @@ public class MobileEnemyCannon : MonoBehaviour
 
     private void Start()
     {
-        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
         _enemyPool = GameObject.FindGameObjectWithTag("EnemyPool").GetComponent<EnemyPool>();
     }
     
@@ -31,17 +31,17 @@ public class MobileEnemyCannon : MonoBehaviour
         transform.rotation = _rotationToTarget;
     }
 
-    public void Fire(TankTypes tank)
+    public void Fire(ShipTypes ship)
     {
         //Fires in the transform.forward direction of the _projectileSpawn
         if (_bulletsFired < _maxBulletsFired && !_alreadyAttacked)
         {
             _alreadyAttacked = true;
             //Allows the tank to fire a spread of bullets before having a longer cooldown
-            if (_bulletsFired == _maxBulletsFired - 1) Invoke(nameof(ResetAttack), tank._fireCooldown);
-            else Invoke(nameof(ResetAttack), tank._fireDelay);
+            if (_bulletsFired == _maxBulletsFired - 1) Invoke(nameof(ResetAttack), ship._fireCooldown);
+            else Invoke(nameof(ResetAttack), ship._fireDelay);
 
-            _enemyPool.GetBulletFromPool(_projectileSpawn, tank);
+            _enemyPool.GetBulletFromPool(_projectileSpawn, ship);
             _bulletsFired++;
         }
     }

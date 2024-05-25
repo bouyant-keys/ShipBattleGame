@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Tank", menuName = "Tank")]
-public class TankTypes : ScriptableObject
+public class ShipTypes : ScriptableObject
 {
     public string _name;
     public int _level;

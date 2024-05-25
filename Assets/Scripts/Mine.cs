@@ -1,17 +1,19 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Mine : MonoBehaviour
 {
-    public Animator _animator;
+    [SerializeField] Animator _animator;
+    [SerializeField] ParticleSystem _explosion;
+    [SerializeField] float _blastRadius = 2f;
+
     public Pool _minePool;
-    public float _blastRadius = 2f;
-    public bool isEnemyMine;
+    public bool isEnemyMine = false; //Only needs to be set by enemypool
 
     public void LayMine()
     {
+        //Play layMine Sound
         StartCoroutine(StartExplosionTimer());
         gameObject.SetActive(true);
     }
@@ -29,8 +31,10 @@ public class Mine : MonoBehaviour
 
     private void Explode()
     {
-        //Play Explosion Effect
         StopCoroutine(StartExplosionTimer());
+
+        AudioManager.instance.Play(AudioManager.instance._tankExplosion);
+        _explosion.Play();
 
         Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, _blastRadius);
         foreach (var hitCollider in hitColliders)
@@ -38,12 +42,13 @@ public class Mine : MonoBehaviour
             switch (hitCollider.tag)
             {
                 case "Enemy":
-                    hitCollider.GetComponent<MobileEnemyBrain>().EnemyHit();
+                    hitCollider.GetComponent<IEnemyTank>().EnemyHit();
                     break;
                 case "Player":
                     hitCollider.GetComponent<PlayerController>().PlayerHit();
                     break;
-                case "Breakable Obj":
+                case "Breakable":
+                    print($"Mine destroyed obj: {hitCollider.name}");
                     hitCollider.GetComponent<BreakableObj>().Break();
                     break;
             }
@@ -52,12 +57,17 @@ public class Mine : MonoBehaviour
         _minePool.ReturnObjToPool(gameObject); 
     }
 
+    private void Beep()
+    {
+        AudioManager.instance.Play(AudioManager.instance._mineBeep);
+    }
+
     private void OnTriggerEnter(Collider trigger)
     {
         if (trigger.gameObject.tag == "Projectile") Explode();
 
-        if (trigger.gameObject.tag == "Player" && _minePool.name == "EnemyPool") Explode();
-        else if (trigger.gameObject.tag == "Enemy" && _minePool.name == "PlayerPool") Explode();
+        if (trigger.gameObject.tag == "Player" && isEnemyMine) Explode();
+        else if (trigger.gameObject.tag == "Enemy" && !isEnemyMine) Explode();
     }
 
     private void OnDrawGizmosSelected()

@@ -1,10 +1,27 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BreakableObj : MonoBehaviour
 {
     public int _hitPoints = 2;
+    float _animOffset;
+    [SerializeField] ParticleSystem[] _breakParticles;
+    [SerializeField] Animation _anim;
+
+    private void Awake() 
+    {
+        _breakParticles = GetComponentsInChildren<ParticleSystem>();
+        _animOffset = UnityEngine.Random.Range(0f, 2f);
+
+        StartCoroutine(StartAnimation());
+    }
+
+    private IEnumerator StartAnimation()
+    {
+        yield return new WaitForSeconds(_animOffset);
+        _anim.Play();
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -21,7 +38,17 @@ public class BreakableObj : MonoBehaviour
 
     public void Break()
     {
-        //Play Breaking Particle Effect
+        foreach (ParticleSystem particles in _breakParticles)
+        {
+            particles.Play();
+        }
+
+        StartCoroutine(Deactivate());
+    }
+
+    IEnumerator Deactivate()
+    {
+        yield return new WaitForSeconds(1f);
         gameObject.SetActive(false);
     }
 }

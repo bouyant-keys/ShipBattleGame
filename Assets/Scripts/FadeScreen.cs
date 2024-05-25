@@ -6,31 +6,22 @@ public class FadeScreen : MonoBehaviour
 {
     public Animation _animation;
 
-    private void Awake()
-    {
-        if (!gameObject.activeSelf)
-        {
-            gameObject.SetActive(true);
-        }
-    }
-
     public void FadeIn()
     {
+        _animation.gameObject.SetActive(true);
         _animation.Play("FadeIn");
+        StartCoroutine(DisableScreen());
+    }
+
+    IEnumerator DisableScreen()
+    {
+        yield return new WaitForSeconds(_animation.GetClip("FadeIn").length - 0.05f);
+        _animation.gameObject.SetActive(false);
     }
 
     public void FadeOut()
     {
+        _animation.gameObject.SetActive(true);
         _animation.Play("FadeOut");
-    }
-
-    public void SetScreenActive()
-    {
-        gameObject.SetActive(true);
-    }
-
-    public void SetScreenInactive()
-    {
-        gameObject.SetActive(false);
     }
 }

@@ -6,27 +6,25 @@ public class Projectile : MonoBehaviour
     public SphereCollider _collider;
     public Pool _pool;
     public AudioSource _audioSource;
-    public int _maxBounces = 2;
+    public int _maxBounces = 0;
 
     [SerializeField] MeshRenderer _bulletVis;
     [SerializeField] ParticleSystem _bulletPop;
-    [SerializeField] GameObject _bulletTrail;
+    [SerializeField] ParticleSystem _bulletFX;
     [SerializeField] GameObject _fastBulletTrail;
 
     Vector3 _direction;
     Vector3 _lastVelocity;
-    Vector3 _collisionPos;
     [SerializeField] int _bounceCount = 0;
-    float _startTime;
     float _currentSpeed;
 
     public void Launch(float speedMultiplier, Vector3 dir)
     {
         _bounceCount = 0;
 
-        _startTime = Time.time;
         _bulletVis.enabled = true;
         _collider.enabled = true;
+        _bulletFX.Play();
 
         _rB.velocity = dir * speedMultiplier * 10f;
         _bulletVis.transform.forward = dir;
@@ -35,13 +33,11 @@ public class Projectile : MonoBehaviour
         {
             AudioManager.instance.Play(AudioManager.instance._fastBulletFire);
             _audioSource.Play();
-            _bulletTrail.SetActive(false);
             _fastBulletTrail.SetActive(true);
         }
         else
         {
             AudioManager.instance.Play(AudioManager.instance._tankFire);
-            _bulletTrail.SetActive(true);
             _fastBulletTrail.SetActive(false);
         }
     }
@@ -61,13 +57,7 @@ public class Projectile : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "Projectile":
-                float collisionLife = collision.gameObject.GetComponent<Projectile>()._startTime;
-                if (_startTime < collisionLife)
-                {
-                    BulletPop();
-                    break;
-                }
-                ReturnToPool();
+                BulletPop();
                 break;
             case "Player":
                 ReturnToPool();
@@ -90,7 +80,6 @@ public class Projectile : MonoBehaviour
             return;
         }
         _currentSpeed = _lastVelocity.magnitude;
-        _collisionPos = collision.GetContact(0).point;
 
         AudioManager.instance.Play(AudioManager.instance._bulletBounce);
 
@@ -105,18 +94,16 @@ public class Projectile : MonoBehaviour
     private void BulletPop()
     {
         ResetBullet();
-        
-        //print(_rB.velocity);
 
         AudioManager.instance.Play(AudioManager.instance._bulletPop);
         _bulletPop.Play();
 
-        Invoke("ReturnObjToPool", _bulletPop.main.duration);
+        Invoke("ReturnToPool", _bulletPop.main.duration);
     }
 
     private void ResetBullet()
     {
-        _bulletTrail.SetActive(false);
+        _bulletFX.Stop();
         _fastBulletTrail.SetActive(false);
         _bulletVis.enabled = false;
 

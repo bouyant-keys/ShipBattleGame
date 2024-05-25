@@ -1,18 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    //Eventually make all audio custom sounds
     public AudioClip _bulletBounce;
     public AudioClip _bulletPop;
     public AudioClip _tankExplosion;
     public AudioClip _tankFire;
     public AudioClip _misfire;
     public AudioClip _fastBulletFire;
-    public AudioClip _mineBeep;
+    public AudioClip _mineBeep; //Custom
+    public AudioClip _mineLay; //custom
+    public AudioClip _boxBreak; //Custom
 
-    AudioSource _audioSource;
+    public AudioSource _audioSource;
 
     //Singleton pattern
     public static AudioManager instance;

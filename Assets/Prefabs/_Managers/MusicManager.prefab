@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4181346036166935835}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &2045944446347191848
 AudioSource:
@@ -142,23 +143,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 2045944446347191848}
   _levelMusic:
-  - {fileID: 8300000, guid: c025ca9be5eb39c4fb9e1c204ceb3a66, type: 3}
+  - {fileID: 8300000, guid: 55e954a47702f27428e3545dce0438de, type: 3}
   - {fileID: 8300000, guid: ecc1582fe2fccc4468f2ab528aa124b6, type: 3}
-  - {fileID: 8300000, guid: 91d63cc61987f0444b13e8f2b9871b24, type: 3}
-  - {fileID: 8300000, guid: 2b16876faead15146b26f0897aa4e89a, type: 3}
-  _brownTank:
-  - {fileID: 8300000, guid: ff87b5b40e2ff43429ddb4fe4d651c3b, type: 3}
-  _greyTank:
-  - {fileID: 8300000, guid: 7a3be1b5339dcc842a8d4f0d75dba814, type: 3}
-  - {fileID: 8300000, guid: 2bdd5a4bdc5768246826fdb0326356aa, type: 3}
-  _tealTank:
-  - {fileID: 8300000, guid: 4470e80daf379f74291bb761e6085521, type: 3}
-  - {fileID: 8300000, guid: 5d0f20c62d2e7674eb9a9537f40195d0, type: 3}
-  _yellowTank:
-  - {fileID: 8300000, guid: d6e2faa743b994e4cb759fe768750da8, type: 3}
-  - {fileID: 8300000, guid: d3d089e7d7a0e61488fa3149951633b2, type: 3}
-  - {fileID: 8300000, guid: 3c84a69042c0eb04caa75dbd5bb61633, type: 3}
-  _pinkTank:
-  - {fileID: 8300000, guid: 543c04875da42c44fbb5e860a2d4b168, type: 3}
-  - {fileID: 8300000, guid: 5a9e66237d5387f408b73d53dfbdd7aa, type: 3}
-  - {fileID: 8300000, guid: 04ca94f6c0e7c1041979ef4f9b7d283a, type: 3}
+  - {fileID: 8300000, guid: a060842a3f3cf2f4c955e8f84785e4f8, type: 3}
+  - {fileID: 8300000, guid: 2d05b8bb1352ccf4788c697fb459db0f, type: 3}
+  _startClip: {fileID: 0}
+  _loopClip: {fileID: 0}

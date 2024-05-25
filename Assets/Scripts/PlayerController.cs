@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDataPersistence
 {
-    [SerializeField] TankTypes _tank;
+    [SerializeField] ShipTypes _ship;
     [SerializeField] GameObject _crown;
     [SerializeField] Transform _cannon;
     [SerializeField] Transform _projectileSpawn;
@@ -11,18 +11,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] BoxCollider _collider;
     [SerializeField] MeshRenderer _baseVis;
     [SerializeField] MeshRenderer _cannonVis;
-    [SerializeField] ParticleSystem _tankExplosion;
+    [SerializeField] ParticleSystem _explosion;
+    [SerializeField] ParticleSystem _ripples;
     GameManager _gameManager;
     UIManager _uiManager;
     PlayerPool _playerPool;
     AudioManager _audioManager;
 
-    public bool tankControls = false;
-    public float _rotationSensitivity = 8f;
+    [SerializeField] float _rotationSensitivity = 8f;
     float _playerSpeed;
     float _horizontalForce;
     float _verticalForce;
     bool _localInputEnabled = true;
+    bool _crownActive = false;
 
     Quaternion _rotationToTarget;
     Transform _mouseWorldPos;
@@ -36,18 +37,19 @@ public class PlayerController : MonoBehaviour
         _audioManager = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         _mouseWorldPos = GameObject.FindGameObjectWithTag("MouseWorldPos").transform;
 
-        //TODO: Enable/disable Crown based on save file
-        if (_crown.activeSelf) _crown.SetActive(false);
+        _playerSpeed = _ship._tankSpeed * 5f;
+    }
 
-        _playerSpeed = _tank._tankSpeed * 5f;
+    private void Start() {
+        GameObject.FindGameObjectWithTag("DataManager").GetComponent<DataPersistenceManager>().LoadGame();
+        _crown.SetActive(_crownActive);
     }
     
     void FixedUpdate()
     {
         if (!GameManager._globalInputEnabled || !_localInputEnabled) return;
 
-        if (tankControls) TankMovement();
-        else CameraMovement();
+        TankMovement();
 
         //Cannon face Mouse/Target
         _directionToTarget = new Vector3(_mouseWorldPos.position.x - transform.position.x, 0f, _mouseWorldPos.position.z - transform.position.z);
@@ -72,37 +74,20 @@ public class PlayerController : MonoBehaviour
         _rigidBody.rotation = Quaternion.Euler(0f, (_rigidBody.rotation.eulerAngles.y + _horizontalForce), 0f);
         _rigidBody.velocity = transform.forward * _verticalForce;
     }
-    private void CameraMovement()
-    {
-        //Camera-based Controls for Base
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-
-        if (horizontal == 0f && vertical == 0f)
-        {
-            _rigidBody.velocity = Vector3.zero;
-            return;
-        }
-        Vector3 direction = new Vector3(horizontal, 0f, vertical);
-        direction = direction.normalized * _playerSpeed;
-        _rigidBody.velocity = direction;
-
-        transform.forward = Vector3.Lerp(transform.forward, direction, _rotationSensitivity);
-    }
 
     private void HandleInputs() //Handles firing, planting mines, and pausing
     {
         //Attack Inputs 
-        if (Input.GetMouseButtonDown(0) && _tank._canFire)
+        if (Input.GetMouseButtonDown(0) && _ship._canFire)
         {
             if (_playerPool._bulletPool.Count == 0)
             {
                 _audioManager.Play(_audioManager._misfire);
                 return;
             }
-            _playerPool.GetBulletFromPool(_projectileSpawn, _tank);
+            _playerPool.GetBulletFromPool(_projectileSpawn, _ship);
         }
-        else if (Input.GetKeyDown(KeyCode.Space) && _tank._canPlaceMines)
+        else if (Input.GetKeyDown(KeyCode.Space) && _ship._canPlaceMines)
         {
             _playerPool.GetMineFromPool(_mineSpawn.position);
         }
@@ -123,10 +108,11 @@ public class PlayerController : MonoBehaviour
         _baseVis.enabled = false;
         _cannonVis.enabled = false;
 
-        _tankExplosion.Play(); //Plays explosion effect
+        _ripples.Stop();
+        _explosion.Play(); //Plays explosion effect
         _audioManager.Play(_audioManager._tankExplosion);
 
-        Invoke("Die", _tankExplosion.main.duration);
+        Invoke("Die", _explosion.main.duration);
     }
 
     private void Die() //Updates GameManager upon death
@@ -140,5 +126,15 @@ public class PlayerController : MonoBehaviour
         {
             PlayerHit();
         }
+    }
+
+    public void SaveData(GameData data)
+    {
+        //Nothing to save
+    }
+
+    public void LoadData(GameData data)
+    {
+        _crownActive = data.completedGame;
     }
 }

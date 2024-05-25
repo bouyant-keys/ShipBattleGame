@@ -3,3 +3,19 @@ Resources Used for Tank game:
 - https://www.myfreetextures.com/
 - Created using assets from ambientCG.com (CC0).
 - Freesound.org
+
+Music:
+- Risk - StudioKolomna, Music by Denis Maksimov from Pixabay -- Boss Fight
+- The Fight - Music by JuliusH from Pixabay -- Default Levels
+- Battle Ship - Music by Hot_Music from Pixabay
+- Honor and Sword (Main) - Music by Zakhar Valaha from Pixabay -- Main Menu
+- Cinematic Dramatic - Music by AleXZavesa from Pixabay -- Lose Screen
+- Happy Staccato (Short) - Music by Zakhar Valaha from Pixabay -- Win Screen
+
+- Success Fanfare Trumpets - Sound effect from Pixabay
+- Phone Pick Up - Sound effect from Pixabay
+- Wood Crate Destroy 2 - Sound effect from Pixabay
+- Big Ship stationary 1 - Sound effect from Pixabay
+- Fail - Sound Effect by UNIVERSFIELD from Pixabay
+- Ocean Sea Soft Waves - Sound Effect by Micheal from Pixabay
+- Medieval Fanfare - Sound Effect from Pixabay

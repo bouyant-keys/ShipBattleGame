@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _name: Grey Tank
   _level: 2
-  _tankColor: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 0}
+  _tankColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 0}
   _sightRange: 12
   _attackRange: 8
   _canMove: 1
